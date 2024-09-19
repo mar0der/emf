@@ -3,7 +3,6 @@ __pycache__/
 *.env
 .vscode/
 planed_features.txt
-ProjectStructure.txt
 ./data
 data/data.csv
 data/text_generator.py
@@ -11,4 +10,6 @@ data/app.py.bak
 ./db_backups
 src/db_backups/
 *.sql
-TerminalCommands
+project_structure.txt
+terminal_commands.txt
+project_structure.txt
