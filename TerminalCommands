@@ -1,0 +1,36 @@
+db15e6276d0fd649c8069805fa54f6468f1ea5f64b5b36daadad12d7a01ecaf2
+# Create new user
+Invoke-WebRequest -Uri "http://localhost:8080/v1/auth/register" -Method POST -Headers @{"Content-Type"="application/json"} -Body '{"username":"elon_fan", "email":"elon_fan@example.com", "password":"password", "is_admin":true}'
+# Get api token
+Invoke-WebRequest -Uri "http://localhost:8080/v1/auth/token" -Method POST -Headers @{"Content-Type"="application/json"} -Body '{"username":"elon_fan"}'
+# Get my information
+Invoke-WebRequest -Uri "http://localhost:8080/v1/users/me" -Headers @{"X-API-Token"="db15e6276d0fd649c8069805fa54f6468f1ea5f64b5b36daadad12d7a01ecaf2"}
+# get user with id
+Invoke-WebRequest -Uri "http://localhost:8080/v1/users/1" -Headers @{"X-API-Token"="db15e6276d0fd649c8069805fa54f6468f1ea5f64b5b36daadad12d7a01ecaf2"}
+# Get all users
+Invoke-WebRequest -Uri "http://localhost:8080/v1/users" -Headers @{"X-API-Token"="db15e6276d0fd649c8069805fa54f6468f1ea5f64b5b36daadad12d7a01ecaf2"}
+
+# Create Interview
+Invoke-WebRequest -Uri "http://localhost:8080/v1/interviews" -Method POST -Headers @{"X-API-Token"="db15e6276d0fd649c8069805fa54f6468f1ea5f64b5b36daadad12d7a01ecaf2"} -ContentType "application/json" -Body '{"date": "2023-09-12", "interviewer": "Joe Rogan", "title": "Elon Musk on AI", "link": "https://example.com/interview", "platform": "Podcast"}'
+# Get All Interviews
+Invoke-WebRequest -Uri "http://localhost:8080/v1/interviews" -Headers @{"X-API-Token"="db15e6276d0fd649c8069805fa54f6468f1ea5f64b5b36daadad12d7a01ecaf2"}
+# Get Interview by ID
+Invoke-WebRequest -Uri "http://localhost:8080/v1/interviews/<id>" -Headers @{"X-API-Token"="db15e6276d0fd649c8069805fa54f6468f1ea5f64b5b36daadad12d7a01ecaf2"}
+# Update Interview
+Invoke-WebRequest -Uri "http://localhost:8080/v1/interviews/<id>" -Method PUT -Headers @{"X-API-Token"="db15e6276d0fd649c8069805fa54f6468f1ea5f64b5b36daadad12d7a01ecaf2"} -ContentType "application/json" -Body '{"title": "Updated: Elon Musk on AI and Space"}'
+# Delete interview
+Invoke-WebRequest -Uri "http://localhost:8080/v1/interviews/<id>" -Method DELETE -Headers @{"X-API-Token"="db15e6276d0fd649c8069805fa54f6468f1ea5f64b5b36daadad12d7a01ecaf2"}
+
+
+If you encounter any issues or need to make further changes to your database schema, you can follow the same process:
+
+Modify your models
+Run flask db migrate -m "Description of changes"
+Apply with flask db upgrade
+Restart your app container
+
+docker-compose exec app python seed.py
+
+
+database backup
+docker-compose run --rm app python db_ops.py backup
