@@ -3,7 +3,6 @@ services:
     build: .
     volumes:
       - ./src:/app
-      - ./db_ops:/db_ops
     ports:
       - "8080:5000"
     environment:

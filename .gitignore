@@ -8,3 +8,7 @@ ProjectStructure.txt
 data/data.csv
 data/text_generator.py
 data/app.py.bak
+./db_backups
+src/db_backups/
+*.sql
+TerminalCommands
