@@ -2,3 +2,9 @@ __pycache__/
 *.pyc
 *.env
 .vscode/
+planed_features.txt
+ProjectStructure.txt
+./data
+data/data.csv
+data/text_generator.py
+data/app.py.bak
