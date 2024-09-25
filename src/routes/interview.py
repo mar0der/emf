@@ -3,44 +3,54 @@ from models.interview import Interview
 from schemas.interview import InterviewSchema
 from extensions import db
 from utils.decorators import token_required
+from datetime import datetime
 
 bp = Blueprint('interview_routes', __name__, url_prefix='/v1/interviews')
-
-@bp.route('', methods=['POST'])
-@token_required
-def create_interview():
-    data = InterviewSchema.load(request.json)
-    new_interview = Interview(**data)
-    db.session.add(new_interview)
-    db.session.commit()
-    return jsonify(InterviewSchema.dump(new_interview)), 201
 
 @bp.route('', methods=['GET'])
 @token_required
 def get_interviews():
-    interviews = Interview.query.all()
-    return jsonify([InterviewSchema.dump(interview) for interview in interviews])
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    
+    interviews = Interview.query.paginate(page=page, per_page=per_page, error_out=False)
+    
+    return jsonify({
+        'interviews': [InterviewSchema.dump(interview) for interview in interviews.items],
+        'total': interviews.total,
+        'pages': interviews.pages,
+        'current_page': page
+    }), 200
 
 @bp.route('/<int:interview_id>', methods=['GET'])
 @token_required
 def get_interview(interview_id):
     interview = Interview.query.get_or_404(interview_id)
-    return jsonify(InterviewSchema.dump(interview))
+    return jsonify(InterviewSchema.dump(interview)), 200
 
-@bp.route('/<int:interview_id>', methods=['PUT'])
+@bp.route('/by-date', methods=['GET'])
 @token_required
-def update_interview(interview_id):
-    interview = Interview.query.get_or_404(interview_id)
-    data = InterviewSchema.load(request.json)
-    for key, value in data.items():
-        setattr(interview, key, value)
-    db.session.commit()
-    return jsonify(InterviewSchema.dump(interview))
+def get_interviews_by_date():
+    date_str = request.args.get('date')
+    
+    if not date_str:
+        return jsonify({"error": "Date parameter is required"}), 400
+    
+    try:
+        date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    except ValueError:
+        return jsonify({"error": "Invalid date format. Use YYYY-MM-DD"}), 400
+    
+    interviews = Interview.query.filter(Interview.date == date).all()
+    
+    return jsonify({
+        'interviews': [InterviewSchema.dump(interview) for interview in interviews],
+        'total': len(interviews),
+        'date': date_str
+    }), 200
 
-@bp.route('/<int:interview_id>', methods=['DELETE'])
+@bp.route('/by_interviewer/<string:interviewer>', methods=['GET'])
 @token_required
-def delete_interview(interview_id):
-    interview = Interview.query.get_or_404(interview_id)
-    db.session.delete(interview)
-    db.session.commit()
-    return '', 204
+def get_interviews_by_interviewer(interviewer):
+    interviews = Interview.query.filter(Interview.interviewer.ilike(f'%{interviewer}%')).all()
+    return jsonify([InterviewSchema.dump(interview) for interview in interviews])
