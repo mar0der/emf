@@ -21,9 +21,10 @@ services:
       - POSTGRES_USER=joro
       - POSTGRES_PASSWORD=12qwaszx
       - POSTGRES_DB=elonfan
-
   pgadmin:
     image: dpage/pgadmin4
+    volumes:
+      - ./configs:/configs
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@example.com
       - PGADMIN_DEFAULT_PASSWORD=adminpassword

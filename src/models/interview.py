@@ -2,6 +2,8 @@ from extensions import db
 from datetime import datetime
 
 class Interview(db.Model):
+    __tablename__ = 'interviews'
+
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False)
     interviewer = db.Column(db.String(100), nullable=False)
@@ -13,7 +15,7 @@ class Interview(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    predictions = db.relationship('Prediction', secondary='interview_prediction', back_populates='interviews')
+    predictions = db.relationship('Prediction', secondary='interview_predictions', back_populates='interviews')
 
     def __repr__(self):
         return f'<Interview {self.title} on {self.date}>'

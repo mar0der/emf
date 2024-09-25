@@ -2,16 +2,16 @@ from extensions import db
 from datetime import datetime
 
 class Prediction(db.Model):
+    __tablename__ = 'predictions'
+
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text, nullable=False)
-    resolution_date = db.Column(db.Date, nullable=True)
-    status = db.Column(db.Enum('pending', 'correct', 'incorrect', name='prediction_status'), default='pending')
+    goal = db.Column(db.String(500), nullable=False)
+    goal_date = db.Column(db.Date, nullable=False)
+    status = db.Column(db.Enum('in_progress', 'achieved', 'canceled', 'missed', name='prediction_status'), default='in_progress')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    interviews = db.relationship('Interview', secondary='interview_prediction', back_populates='predictions')
-
-    __table_args__ = (db.UniqueConstraint('content', 'resolution_date', name='unique_prediction'),)
+    interviews = db.relationship('Interview', secondary='interview_predictions', back_populates='predictions')
 
     def __repr__(self):
-        return f'<Prediction {self.id}: {self.content[:30]}...>'
+        return f'<Prediction {self.id}: {self.goal[:30]}...>'
